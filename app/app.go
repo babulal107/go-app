@@ -1,23 +1,23 @@
 package app
- 
+
 import (
+	"bitbucket.org/go-api/app/handler"
 	"fmt"
 	"log"
 	"net/http"
 
-	"bitbucket.org/go-api/app/handler"
 	"bitbucket.org/go-api/app/model"
 	"bitbucket.org/go-api/config"
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
 )
- 
+
 // App has router and db instances
 type App struct {
 	Router *mux.Router
 	DB     *gorm.DB
 }
- 
+
 // App initialize with predefined configuration
 func (a *App) Initialize(config *config.Config) {
 	dbURI := fmt.Sprintf("%s:%s@/%s?charset=%s&parseTime=True",
@@ -39,13 +39,7 @@ func (a *App) Initialize(config *config.Config) {
 // Set all required routers
 func (a *App) setRouters() {
 	// Routing for handling the projects
-	a.Get("/users", a.GetAllEmployees)
-	a.Post("/users", a.CreateEmployee)
-	a.Get("/users/{title}", a.GetEmployee)
-	a.Put("/users/{title}", a.UpdateEmployee)
-	a.Delete("/users/{title}", a.DeleteEmployee)
-	a.Put("/users/{title}/disable", a.DisableEmployee)
-	a.Put("/users/{title}/enable", a.EnableEmployee)
+	a.setUserRouters()
 }
  
 // Wrap the router for GET method

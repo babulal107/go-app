@@ -1,6 +1,7 @@
 package handler
  
 import (
+	"bitbucket.org/go-api/app/common"
 	"bitbucket.org/go-api/app/model"
 	"encoding/json"
 	"net/http"
@@ -12,7 +13,7 @@ import (
 func GetAllUsers(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 	users := []model.User{}
 	db.Find(&users)
-	respondJSON(w, http.StatusOK, users)
+	common.RespondJSON(w, http.StatusOK, users)
 }
  
 func CreateUser(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
@@ -20,16 +21,16 @@ func CreateUser(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
  
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&user); err != nil {
-		respondError(w, http.StatusBadRequest, err.Error())
+		common.RespondError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 	defer r.Body.Close()
  
 	if err := db.Save(&user).Error; err != nil {
-		respondError(w, http.StatusInternalServerError, err.Error())
+		common.RespondError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	respondJSON(w, http.StatusCreated, user)
+	common.RespondJSON(w, http.StatusCreated, user)
 }
  
 func GetUser(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
@@ -40,7 +41,7 @@ func GetUser(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 	if user == nil {
 		return
 	}
-	respondJSON(w, http.StatusOK, user)
+	common.RespondJSON(w, http.StatusOK, user)
 }
  
 func UpdateUser(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
@@ -54,16 +55,16 @@ func UpdateUser(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
  
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&user); err != nil {
-		respondError(w, http.StatusBadRequest, err.Error())
+		common.RespondError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 	defer r.Body.Close()
  
 	if err := db.Save(&user).Error; err != nil {
-		respondError(w, http.StatusInternalServerError, err.Error())
+		common.RespondError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	respondJSON(w, http.StatusOK, user)
+	common.RespondJSON(w, http.StatusOK, user)
 }
  
 func DeleteUser(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
@@ -75,10 +76,10 @@ func DeleteUser(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err := db.Delete(&user).Error; err != nil {
-		respondError(w, http.StatusInternalServerError, err.Error())
+		common.RespondError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	respondJSON(w, http.StatusNoContent, nil)
+	common.RespondJSON(w, http.StatusNoContent, nil)
 }
  
 func DisableUser(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
@@ -91,10 +92,10 @@ func DisableUser(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 	}
 	user.Disable()
 	if err := db.Save(&user).Error; err != nil {
-		respondError(w, http.StatusInternalServerError, err.Error())
+		common.RespondError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	respondJSON(w, http.StatusOK, user)
+	common.RespondJSON(w, http.StatusOK, user)
 }
  
 func EnableUser(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
@@ -107,17 +108,17 @@ func EnableUser(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 	}
 	user.Enable()
 	if err := db.Save(&user).Error; err != nil {
-		respondError(w, http.StatusInternalServerError, err.Error())
+		common.RespondError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	respondJSON(w, http.StatusOK, user)
+	common.RespondJSON(w, http.StatusOK, user)
 }
  
 // getUserOr404 gets a user instance if exists, or respond the 404 error otherwise
 func getUserOr404(db *gorm.DB, name string, w http.ResponseWriter, r *http.Request) *model.User {
 	user := model.User{}
 	if err := db.First(&user, model.User{Name: name}).Error; err != nil {
-		respondError(w, http.StatusNotFound, err.Error())
+		common.RespondError(w, http.StatusNotFound, err.Error())
 		return nil
 	}
 	return &user
