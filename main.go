@@ -1,8 +1,8 @@
 package main
  
 import (
-	"bitbucket.org/go-api/app"
-	"bitbucket.org/go-api/config"
+	"bitbucket.org/go-app/app"
+	"bitbucket.org/go-app/config"
 	"log"
 )
  

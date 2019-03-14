@@ -1,7 +1,7 @@
 package app
 
 import (
-	"bitbucket.org/go-api/app/handler"
+	"bitbucket.org/go-app/app/handler"
 	"net/http"
 )
 

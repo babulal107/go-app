@@ -1,13 +1,13 @@
 package app
 
 import (
-	"bitbucket.org/go-api/app/handler"
+	"bitbucket.org/go-app/app/handler"
 	"fmt"
 	"log"
 	"net/http"
 
-	"bitbucket.org/go-api/app/model"
-	"bitbucket.org/go-api/config"
+	"bitbucket.org/go-app/app/model"
+	"bitbucket.org/go-app/config"
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
 )

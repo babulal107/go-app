@@ -1,8 +1,8 @@
 package handler
  
 import (
-	"bitbucket.org/go-api/app/common"
-	"bitbucket.org/go-api/app/model"
+	"bitbucket.org/go-app/app/common"
+	"bitbucket.org/go-app/app/model"
 	"encoding/json"
 	"net/http"
 
