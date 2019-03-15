@@ -1,7 +1,6 @@
 package app
 
 import (
-	"bitbucket.org/go-app/app/handler"
 	"fmt"
 	"log"
 	"net/http"
@@ -60,35 +59,6 @@ func (a *App) Put(path string, f func(w http.ResponseWriter, r *http.Request)) {
 // Wrap the router for DELETE method
 func (a *App) Delete(path string, f func(w http.ResponseWriter, r *http.Request)) {
 	a.Router.HandleFunc(path, f).Methods("DELETE")
-}
- 
-// Handlers to manage Employee Data
-func (a *App) GetAllEmployees(w http.ResponseWriter, r *http.Request) {
-	handler.GetAllUsers(a.DB, w, r)
-}
- 
-func (a *App) CreateEmployee(w http.ResponseWriter, r *http.Request) {
-	handler.CreateUser(a.DB, w, r)
-}
- 
-func (a *App) GetEmployee(w http.ResponseWriter, r *http.Request) {
-	handler.GetUser(a.DB, w, r)
-}
- 
-func (a *App) UpdateEmployee(w http.ResponseWriter, r *http.Request) {
-	handler.UpdateUser(a.DB, w, r)
-}
- 
-func (a *App) DeleteEmployee(w http.ResponseWriter, r *http.Request) {
-	handler.DeleteUser(a.DB, w, r)
-}
- 
-func (a *App) DisableEmployee(w http.ResponseWriter, r *http.Request) {
-	handler.DisableUser(a.DB, w, r)
-}
- 
-func (a *App) EnableEmployee(w http.ResponseWriter, r *http.Request) {
-	handler.EnableUser(a.DB, w, r)
 }
  
 // Run the app on it's router

@@ -1,10 +1,13 @@
 package handler
- 
+
 import (
 	"bitbucket.org/go-app/app/common"
 	"bitbucket.org/go-app/app/model"
+	"bitbucket.org/go-app/helper"
 	"encoding/json"
+	"errors"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
@@ -35,9 +38,12 @@ func CreateUser(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
  
 func GetUser(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
- 
-	name := vars["name"]
-	user := getUserOr404(db, name, w, r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		common.RespondError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	user := getUserOr404(db, id, w, r)
 	if user == nil {
 		return
 	}
@@ -46,9 +52,13 @@ func GetUser(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
  
 func UpdateUser(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
- 
-	name := vars["name"]
-	user := getUserOr404(db, name, w, r)
+
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		common.RespondError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	user := getUserOr404(db, id, w, r)
 	if user == nil {
 		return
 	}
@@ -69,9 +79,13 @@ func UpdateUser(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
  
 func DeleteUser(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
- 
-	name := vars["name"]
-	user := getUserOr404(db, name, w, r)
+
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		common.RespondError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	user := getUserOr404(db, id, w, r)
 	if user == nil {
 		return
 	}
@@ -84,9 +98,13 @@ func DeleteUser(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
  
 func DisableUser(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
- 
-	name := vars["name"]
-	user := getUserOr404(db, name, w, r)
+
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		common.RespondError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	user := getUserOr404(db, id, w, r)
 	if user == nil {
 		return
 	}
@@ -100,9 +118,13 @@ func DisableUser(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
  
 func EnableUser(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
- 
-	name := vars["name"]
-	user := getUserOr404(db, name, w, r)
+
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		common.RespondError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	user := getUserOr404(db, id, w, r)
 	if user == nil {
 		return
 	}
@@ -115,11 +137,41 @@ func EnableUser(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 }
  
 // getUserOr404 gets a user instance if exists, or respond the 404 error otherwise
-func getUserOr404(db *gorm.DB, name string, w http.ResponseWriter, r *http.Request) *model.User {
+func getUserOr404(db *gorm.DB, id int, w http.ResponseWriter, r *http.Request) *model.User {
 	user := model.User{}
-	if err := db.First(&user, model.User{Name: name}).Error; err != nil {
+	if err := db.First(&user, id).Error; err != nil {
 		common.RespondError(w, http.StatusNotFound, err.Error())
 		return nil
 	}
 	return &user
+}
+
+//ExportUser.. export all user to csv file.
+func ExportUser(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
+
+	users := []model.User{}
+	db.Find(&users)
+	if users==nil{
+		common.RespondError(w, http.StatusNotFound, errors.New("no data found").Error())
+		return
+	}
+	header := []string{"ID","Name", "Email", "City","Age"}
+	data := [][]string{header}
+	for _,row :=range users{
+		var user = []string{}
+		user = append(user, strconv.FormatUint(uint64(row.ID), 10))
+		user = append(user, row.Name)
+		user = append(user, row.Email)
+		user = append(user, row.City)
+		user = append(user, strconv.FormatUint(uint64(row.Age), 10))
+
+		data = append(data,user)
+	}
+	err := helper.GenerateCSV("users", data)
+	if err != nil {
+		common.RespondError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	message := []string{"CSV Generated Successfully"}
+	common.RespondJSON(w, http.StatusOK, message)
 }

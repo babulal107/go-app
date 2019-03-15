@@ -1,5 +1,5 @@
 package main
- 
+
 import (
 	"bitbucket.org/go-app/app"
 	"bitbucket.org/go-app/config"
