@@ -5,3 +5,4 @@ go get -u github.com/jinzhu/gorm
 go get -u github.com/go-sql-driver/mysql
 
 
+go get -u -v ./...

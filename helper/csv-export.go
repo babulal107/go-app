@@ -1,11 +1,11 @@
 package helper
 
 import (
-	"bitbucket.org/go-app/config"
 	"encoding/csv"
 	"log"
 	"os"
 	"time"
+	"bitbucket.org/babulal107/go-app/config"
 )
 
 func GenerateCSV(fileName string, data [][]string) error{
@@ -16,24 +16,18 @@ func GenerateCSV(fileName string, data [][]string) error{
 		err error
 	)
 
-	path = config.FileExportPath+GetFileName(fileName)+config.FileExtentationCSV
-	if file, err = os.OpenFile(path, os.O_CREATE|os.O_WRONLY, 0777); err!=nil{
+	path = config.FileExportPath+GetFileName(fileName)+config.FileExtenuationCST
+	if file, err = os.OpenFile(path, os.O_CREATE|os.O_WRONLY, os.ModePerm); err!=nil{
 		log.Fatal("Cannot create file", err)
 		return err
 	}
-
-	defer func() {
-		if file != nil {
-			file.Close()
-		}
-	}()
+	defer Close(file)
 
 	defer func() {
 		if writer != nil {
 			writer.Flush()
 		}
 	}()
-
 
 	writer = csv.NewWriter(file)
 	if err = writer.WriteAll(data); err!=nil{

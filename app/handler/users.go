@@ -1,20 +1,19 @@
 package handler
 
 import (
-	"bitbucket.org/go-app/app/common"
-	"bitbucket.org/go-app/app/model"
-	"bitbucket.org/go-app/helper"
 	"encoding/json"
 	"errors"
 	"net/http"
 	"strconv"
-
+	"bitbucket.org/babulal107/go-app/app/common"
+	"bitbucket.org/babulal107/go-app/app/model"
+	"bitbucket.org/babulal107/go-app/helper"
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
 )
  
 func GetAllUsers(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
-	users := []model.User{}
+	var users []model.User
 	db.Find(&users)
 	common.RespondJSON(w, http.StatusOK, users)
 }
