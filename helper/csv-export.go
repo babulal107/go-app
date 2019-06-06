@@ -16,7 +16,7 @@ func GenerateCSV(fileName string, data [][]string) error{
 		err error
 	)
 
-	path = config.FileExportPath+GetFileName(fileName)+config.FileExtenuationCST
+	path = config.FileExportPath+GetFileName(fileName)+config.FileExtenuationCSV
 	if file, err = os.OpenFile(path, os.O_CREATE|os.O_WRONLY, os.ModePerm); err!=nil{
 		log.Fatal("Cannot create file", err)
 		return err
